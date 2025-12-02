@@ -9,14 +9,38 @@
   outputs = { self, nixpkgs, flake-utils }: flake-utils.lib.eachDefaultSystem (system: 
   let
     pkgs = (import nixpkgs { inherit system; });
-    day = "1";
+    day = "1-2";
     version = "2025.12." + day;
   in {
     packages = {
-      day1 = pkgs.callPackage ./. { day = "1"; inherit version; };
+      day1-1 = pkgs.callPackage ./. { 
+        day = "1-1";
+        inherit version; 
+      };
+      day1-2 = pkgs.callPackage ./. { 
+        day = "1-2";
+        inherit version; 
+      };
+    };
+    apps = {
+      day1-1 = {
+        type = "app";
+        program = "${pkgs.writeShellScriptBin "day1-1" ''
+          #!/usr/bin/env bash
+          cat ${./inputs/day1.txt} | ${self.packages.${system}.day1-1}/bin/day1-1
+        ''}/bin/day1-1";
+      };
+      day1-2 = {
+        type = "app";
+        program = "${pkgs.writeShellScriptBin "day1-2" ''
+          #!/usr/bin/env bash
+          cat ${./inputs/day1.txt} | ${self.packages.${system}.day1-2}/bin/day1-2
+        ''}/bin/day1-2";
+      };
     };
 
-    packages.default = self.packages.${system}.day1;
+    packages.default = self.packages.${system}."day${day}";
+    apps.default = self.apps.${system}."day${day}";
 
     devShells.default = pkgs.mkShell {
       inputsFrom = [
@@ -24,6 +48,7 @@
       ];
       nativeBuildInputs = with pkgs; [
         rust-analyzer
+        rustfmt
       ];
     };
   });
