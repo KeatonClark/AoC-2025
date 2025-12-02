@@ -1,6 +1,5 @@
 {
   rustPlatform,
-  day,
   version,
 }:
 rustPlatform.buildRustPackage {
@@ -10,6 +9,5 @@ rustPlatform.buildRustPackage {
   cargoLock = {
     lockFile = ./Cargo.lock;
   };
-  bin = "day" + day;
   doCheck = true;
 }

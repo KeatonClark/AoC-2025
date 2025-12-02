@@ -9,38 +9,21 @@
   outputs = { self, nixpkgs, flake-utils }: flake-utils.lib.eachDefaultSystem (system: 
   let
     pkgs = (import nixpkgs { inherit system; });
-    day = "1-2";
-    version = "2025.12." + day;
+    version = "2025.12.1";
+    mkDay = (day: input: {
+      type = "app";
+      program = "${pkgs.writeShellScriptBin "day${day}" ''
+        #!/usr/bin/env bash
+        cat ${input} | ${self.packages.${system}.default}/bin/day${day}
+      ''}/bin/day${day}";
+    });
   in {
-    packages = {
-      day1-1 = pkgs.callPackage ./. { 
-        day = "1-1";
-        inherit version; 
-      };
-      day1-2 = pkgs.callPackage ./. { 
-        day = "1-2";
-        inherit version; 
-      };
-    };
     apps = {
-      day1-1 = {
-        type = "app";
-        program = "${pkgs.writeShellScriptBin "day1-1" ''
-          #!/usr/bin/env bash
-          cat ${./inputs/day1.txt} | ${self.packages.${system}.day1-1}/bin/day1-1
-        ''}/bin/day1-1";
-      };
-      day1-2 = {
-        type = "app";
-        program = "${pkgs.writeShellScriptBin "day1-2" ''
-          #!/usr/bin/env bash
-          cat ${./inputs/day1.txt} | ${self.packages.${system}.day1-2}/bin/day1-2
-        ''}/bin/day1-2";
-      };
+      day1-1 = (mkDay "1-1" ./inputs/day1.txt);
+      day1-2 = (mkDay "1-2" ./inputs/day1.txt);
     };
 
-    packages.default = self.packages.${system}."day${day}";
-    apps.default = self.apps.${system}."day${day}";
+    packages.default = pkgs.callPackage ./. { inherit version; };
 
     devShells.default = pkgs.mkShell {
       inputsFrom = [
