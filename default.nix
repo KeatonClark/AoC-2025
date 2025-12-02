@@ -1,7 +1,7 @@
 {
   rustPlatform,
   day,
-  version
+  version,
 }:
 rustPlatform.buildRustPackage {
   inherit version;
