@@ -9,6 +9,7 @@ fn main() {
 	let mut dial_pos = 50;
 	let mut ret = 0;
 	for input in io::stdin().lock().lines() {
+		#[allow(unused_assignments)]
 		let mut count = 0;
 		(dial_pos, count) = move_dial(
 			parse_input(&input.expect("Could not read from stdin")).expect("Could not parse input"),

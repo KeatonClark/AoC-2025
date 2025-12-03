@@ -20,14 +20,15 @@ fn split_range(range: &str) -> (usize, usize) {
 }
 fn is_pattern(id: usize) -> bool {
 	let id_str = id.to_string();
-	if id_str.len() & 1 == 0
-		&& let (left, right) = id_str.split_at(id_str.len() / 2)
-		&& left == right
-	{
-		true
-	} else {
-		false
+	for pattern_len in 1..=id_str.len() / 2 {
+		if id_str.len() % pattern_len == 0 {
+			let pattern = id_str[0..pattern_len].repeat(id_str.len() / pattern_len);
+			if pattern == id_str {
+				return true;
+			}
+		}
 	}
+	false
 }
 
 #[cfg(test)]
@@ -49,6 +50,15 @@ mod tests {
 			split_range("38593856-38593862"),
 			(38593856, 38593862)
 		));
+		assert!(matches!(split_range("565653-565659"), (565653, 565659)));
+		assert!(matches!(
+			split_range("824824821-824824827"),
+			(824824821, 824824827)
+		));
+		assert!(matches!(
+			split_range("2121212118-2121212124"),
+			(2121212118, 2121212124)
+		));
 	}
 
 	#[test]
@@ -62,7 +72,7 @@ mod tests {
 		}
 
 		for i in 95..=115 {
-			if i == 99 {
+			if i == 99 || i == 111 {
 				assert!(is_pattern(i));
 			} else {
 				assert!(!is_pattern(i));
@@ -70,7 +80,7 @@ mod tests {
 		}
 
 		for i in 998..=1012 {
-			if i == 1010 {
+			if i == 1010 || i == 999 {
 				assert!(is_pattern(i));
 			} else {
 				assert!(!is_pattern(i));
@@ -107,6 +117,30 @@ mod tests {
 
 		for i in 38593856..=38593862 {
 			if i == 38593859 {
+				assert!(is_pattern(i));
+			} else {
+				assert!(!is_pattern(i));
+			}
+		}
+
+		for i in 565653..=565659 {
+			if i == 565656 {
+				assert!(is_pattern(i));
+			} else {
+				assert!(!is_pattern(i));
+			}
+		}
+
+		for i in 824824821..=824824827 {
+			if i == 824824824 {
+				assert!(is_pattern(i));
+			} else {
+				assert!(!is_pattern(i));
+			}
+		}
+
+		for i in 2121212118..=2121212124 {
+			if i == 2121212121 {
 				assert!(is_pattern(i));
 			} else {
 				assert!(!is_pattern(i));
