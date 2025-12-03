@@ -10,8 +10,10 @@ fn main() {
 	let mut ret = 0;
 	for input in io::stdin().lock().lines() {
 		let mut count = 0;
-		(dial_pos, count) = move_dial(parse_input(&input.expect("Could not read from stdin")).expect("Could not parse input")
-			, dial_pos);
+		(dial_pos, count) = move_dial(
+			parse_input(&input.expect("Could not read from stdin")).expect("Could not parse input"),
+			dial_pos,
+		);
 		ret += count;
 	}
 	println!("{}", ret);
@@ -20,8 +22,12 @@ fn main() {
 fn parse_input(input: &str) -> Result<Direction, &str> {
 	let input = input.trim();
 	match input {
-		l if input.starts_with("L") => Ok(Direction::Left(l[1..].parse::<usize>().map_err(|_| input)?)),
-		r if input.starts_with("R") => Ok(Direction::Right(r[1..].parse::<usize>().map_err(|_| input)?)),
+		l if input.starts_with("L") => {
+			Ok(Direction::Left(l[1..].parse::<usize>().map_err(|_| input)?))
+		}
+		r if input.starts_with("R") => Ok(Direction::Right(
+			r[1..].parse::<usize>().map_err(|_| input)?,
+		)),
 		_ => Err(input),
 	}
 }
@@ -31,12 +37,15 @@ fn move_dial(dir: Direction, pos: usize) -> (usize, usize) {
 		Direction::Left(count) => {
 			let new = pos as i64 - count as i64;
 			let out = new.rem_euclid(100) as usize;
-			(out, new.div_euclid(100).abs() as usize - if pos == 0 { 1 } else { 0 } + if out == 0 { 1 } else { 0 })
+			(
+				out,
+				new.div_euclid(100).abs() as usize - if pos == 0 { 1 } else { 0 }
+					+ if out == 0 { 1 } else { 0 },
+			)
 		}
 		Direction::Right(count) => {
 			let new = pos + count;
-			(new.rem_euclid(100),
-			 new.div_euclid(100))
+			(new.rem_euclid(100), new.div_euclid(100))
 		}
 	}
 }
