@@ -10,9 +10,13 @@ fn main() {
 	let mut dial_pos = 50;
 	let mut ret = 0;
 	for input in io::stdin().lock().lines() {
-		dial_pos = move_dial(parse_input(&input.expect("Could not read from stdin")).expect("Could not parse input")
-			, dial_pos);
-		if dial_pos == 0 { ret += 1; }
+		dial_pos = move_dial(
+			parse_input(&input.expect("Could not read from stdin")).expect("Could not parse input"),
+			dial_pos,
+		);
+		if dial_pos == 0 {
+			ret += 1;
+		}
 	}
 	println!("{}", ret);
 }
@@ -20,8 +24,12 @@ fn main() {
 fn parse_input(input: &str) -> Result<Direction, &str> {
 	let input = input.trim();
 	match input {
-		l if input.starts_with("L") => Ok(Direction::Left(l[1..].parse::<usize>().map_err(|_| input)?)),
-		r if input.starts_with("R") => Ok(Direction::Right(r[1..].parse::<usize>().map_err(|_| input)?)),
+		l if input.starts_with("L") => {
+			Ok(Direction::Left(l[1..].parse::<usize>().map_err(|_| input)?))
+		}
+		r if input.starts_with("R") => Ok(Direction::Right(
+			r[1..].parse::<usize>().map_err(|_| input)?,
+		)),
 		_ => Err(input),
 	}
 }
