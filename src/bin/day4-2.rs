@@ -1,4 +1,4 @@
-use std::io::{self, BufRead, Read};
+use std::io::{self, BufRead};
 fn main() {
 	let mut data: Vec<Vec<u8>> = Vec::new();
 	for line in io::stdin().lock().lines() {
