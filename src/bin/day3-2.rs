@@ -20,7 +20,8 @@ fn greedy_search(input: &str, skip: usize) -> (u64, &str) {
 				v.1.to_digit(10).expect("Not a digit") as u64,
 				&input[input.len() - v.0..],
 			)
-		}).expect("No max value")
+		})
+		.expect("No max value")
 }
 fn loop_search(mut input: &str) -> u64 {
 	let mut ret = 0;
@@ -38,16 +39,28 @@ mod tests {
 	use super::*;
 	#[test]
 	fn greedy_search_test() {
-		assert!(matches!(greedy_search("987654321111111", 1), (9, "87654321111111")));
-		assert!(matches!(greedy_search("87654321111111", 0), (8, "7654321111111")));
+		assert!(matches!(
+			greedy_search("987654321111111", 1),
+			(9, "87654321111111")
+		));
+		assert!(matches!(
+			greedy_search("87654321111111", 0),
+			(8, "7654321111111")
+		));
 
-		assert!(matches!(greedy_search("811111111111119", 1), (8, "11111111111119")));
+		assert!(matches!(
+			greedy_search("811111111111119", 1),
+			(8, "11111111111119")
+		));
 		assert!(matches!(greedy_search("11111111111119", 0), (9, "")));
 
 		assert!(matches!(greedy_search("234234234234278", 1), (7, "8")));
 		assert!(matches!(greedy_search("8", 0), (8, "")));
 
-		assert!(matches!(greedy_search("818181911112111", 1), (9, "11112111")));
+		assert!(matches!(
+			greedy_search("818181911112111", 1),
+			(9, "11112111")
+		));
 		assert!(matches!(greedy_search("11112111", 0), (2, "111")));
 	}
 	#[test]
