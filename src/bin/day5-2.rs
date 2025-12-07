@@ -1,7 +1,10 @@
 use std::io::{self, Read};
 fn main() {
 	let mut buf = String::new();
-	io::stdin().lock().read_to_string(&mut buf).expect("Could not read input");
+	io::stdin()
+		.lock()
+		.read_to_string(&mut buf)
+		.expect("Could not read input");
 	let (ranges, _) = buf.split_once("\n\n").expect("Could not find input split");
 	let ranges = split_ranges(ranges);
 	let ranges = merge_ranges(ranges);
@@ -9,7 +12,9 @@ fn main() {
 	println!("{ret}");
 }
 
-fn merge_ranges(mut ranges: Vec<std::ops::RangeInclusive<usize>>) -> Vec<std::ops::RangeInclusive<usize>> {
+fn merge_ranges(
+	mut ranges: Vec<std::ops::RangeInclusive<usize>>,
+) -> Vec<std::ops::RangeInclusive<usize>> {
 	ranges.sort_by_key(|r| *r.start());
 	let mut current = ranges[0].clone();
 	let mut merged = Vec::new();
@@ -28,10 +33,14 @@ fn merge_ranges(mut ranges: Vec<std::ops::RangeInclusive<usize>>) -> Vec<std::op
 }
 
 fn split_ranges(ranges: &str) -> Vec<std::ops::RangeInclusive<usize>> {
-	ranges.lines().map(|v| {
-		let (l, r) = v.split_once('-').expect("Could not split range");
-		l.parse::<usize>().expect("Could not parse left bound")..=r.parse::<usize>().expect("Could not parse right bound")
-	}).collect()
+	ranges
+		.lines()
+		.map(|v| {
+			let (l, r) = v.split_once('-').expect("Could not split range");
+			l.parse::<usize>().expect("Could not parse left bound")
+				..=r.parse::<usize>().expect("Could not parse right bound")
+		})
+		.collect()
 }
 
 #[cfg(test)]
@@ -39,11 +48,17 @@ mod tests {
 	use super::*;
 	#[test]
 	fn split_ranges_test() {
-		assert_eq!(vec![3..=5, 10..=14, 16..=20, 12..=18], split_ranges("3-5\n10-14\n16-20\n12-18\n"));
+		assert_eq!(
+			vec![3..=5, 10..=14, 16..=20, 12..=18],
+			split_ranges("3-5\n10-14\n16-20\n12-18\n")
+		);
 	}
 
 	#[test]
 	fn merge_ranges_test() {
-		assert_eq!(merge_ranges(vec![3..=5, 10..=14, 16..=20, 12..=18] ), vec![3..=5, 10..=20]);
+		assert_eq!(
+			merge_ranges(vec![3..=5, 10..=14, 16..=20, 12..=18]),
+			vec![3..=5, 10..=20]
+		);
 	}
 }
