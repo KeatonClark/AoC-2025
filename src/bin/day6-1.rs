@@ -16,7 +16,6 @@ impl From<&str> for Token {
 }
 
 fn main() {
-	let mut buf = String::new();
 	let mut lines: Vec<Vec<Token>> = io::stdin()
 		.lock()
 		.lines()
@@ -96,27 +95,32 @@ mod tests {
 			vec![Token::Mac, Token::Sum, Token::Mac, Token::Sum]
 		);
 	}
+
+	#[test]
 	fn accumulate_test() {
-		assert_eq!(4277556, accumulate(&mut vec![
-			vec![
-				Token::Val(123),
-				Token::Val(328),
-				Token::Val(51),
-				Token::Val(64),
-			],
-			vec![
-				Token::Val(45),
-				Token::Val(64),
-				Token::Val(387),
-				Token::Val(23),
-			],
-			vec![
-				Token::Val(6),
-				Token::Val(98),
-				Token::Val(215),
-				Token::Val(314),
-			],
-			vec![Token::Mac, Token::Sum, Token::Mac, Token::Sum],
-		]));
+		assert_eq!(
+			4277556,
+			accumulate(&mut vec![
+				vec![
+					Token::Val(123),
+					Token::Val(328),
+					Token::Val(51),
+					Token::Val(64),
+				],
+				vec![
+					Token::Val(45),
+					Token::Val(64),
+					Token::Val(387),
+					Token::Val(23),
+				],
+				vec![
+					Token::Val(6),
+					Token::Val(98),
+					Token::Val(215),
+					Token::Val(314),
+				],
+				vec![Token::Mac, Token::Sum, Token::Mac, Token::Sum],
+			])
+		);
 	}
 }
