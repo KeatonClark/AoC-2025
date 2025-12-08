@@ -2,7 +2,7 @@ use std::{io::{self, BufRead}};
 
 #[derive(Debug, Eq, PartialEq)]
 enum Manifold {
-	Seen(usize),
+	Seen(usize, usize),
 	NotSeen(usize),
 }
 
@@ -15,20 +15,27 @@ fn main() {
 }
 
 fn recurse(col: usize, map: &mut [Vec<Manifold>]) -> usize {
-	if let Some(row) = map.get_mut(0) {
-		if let Some(manifold) = row.iter_mut().find(|v| **v == Manifold::NotSeen(col) || **v == Manifold::Seen(col)) {
+	#[allow(irrefutable_let_patterns)]
+	if map.len() > 0 && let (row, map) = map.split_at_mut(1) {
+		if let Some(manifold) = row[0].iter_mut().find(|v| {
+			match **v {
+				Manifold::Seen(v, _) => v == col,
+				Manifold::NotSeen(v) => v == col,
+			}
+		}) {
 			match manifold {
-				Manifold::Seen(_) => 0,
+				Manifold::Seen(_, ct) => *ct,
 				Manifold::NotSeen(_) => {
-					*manifold = Manifold::Seen(col);
-					1 + recurse(col - 1, &mut map[1..]) + recurse(col + 1, &mut map[1..])
+					let ct = recurse(col - 1, map) + recurse(col + 1, map);
+					*manifold = Manifold::Seen(col, ct);
+					ct
 				}
 			}
 		} else {
-			recurse(col, &mut map[1..])
+			recurse(col, &mut map[0..])
 		}
 	} else {
-		0
+		1
 	}
 }
 
@@ -91,7 +98,7 @@ mod tests {
 
 	#[test]
 	fn recurse_test() {
-		assert_eq!(21, recurse(7, &mut vec![
+		let mut map = vec![
 			vec![Manifold::NotSeen(7)],
 			vec![Manifold::NotSeen(6), Manifold::NotSeen(8)],
 			vec![Manifold::NotSeen(5), Manifold::NotSeen(7), Manifold::NotSeen(9)],
@@ -99,6 +106,8 @@ mod tests {
 			vec![Manifold::NotSeen(3), Manifold::NotSeen(5), Manifold::NotSeen(9), Manifold::NotSeen(11)],
 			vec![Manifold::NotSeen(2), Manifold::NotSeen(6), Manifold::NotSeen(12)],
 			vec![Manifold::NotSeen(1), Manifold::NotSeen(3), Manifold::NotSeen(5), Manifold::NotSeen(7), Manifold::NotSeen(9), Manifold::NotSeen(13)]
-		]));
+		];
+		let ret = recurse(7, &mut map);
+		assert_eq!(40, ret);
 	}
 }
