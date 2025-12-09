@@ -33,6 +33,7 @@
       day6-2 = (mkDay "6-2" ./inputs/day6.txt);
       day7-1 = (mkDay "7-1" ./inputs/day7.txt);
       day7-2 = (mkDay "7-2" ./inputs/day7.txt);
+      day8-1 = (mkDay "8-1" ./inputs/day8.txt);
     };
 
     packages.default = pkgs.callPackage ./. { inherit version; };
