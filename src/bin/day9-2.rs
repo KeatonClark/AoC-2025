@@ -7,7 +7,9 @@ struct Point {
 }
 
 impl Point {
-	fn new(x: i64, y: i64) -> Self { Self { x, y } }
+	fn new(x: i64, y: i64) -> Self {
+		Self { x, y }
+	}
 }
 
 impl TryFrom<&str> for Point {
@@ -38,12 +40,15 @@ impl Edge {
 		((a > 0 && b < 0) || (a < 0 && b > 0)) && ((c > 0 && d < 0) || (c < 0 && d > 0))
 	}
 	fn contains_point(&self, point: &Point) -> bool {
-		if (self.0.x.min(self.1.x) <= point.x && point.x <= self.0.x.max(self.1.x)) &&
-			(self.0.y.min(self.1.y) <= point.y && point.y <= self.0.y.max(self.1.y)) {
-			return 0 == (point.x - self.0.x) * (self.1.y - self.0.y) - (point.y - self.0.y) * (self.1.x - self.0.x);
+		if (self.0.x.min(self.1.x) <= point.x && point.x <= self.0.x.max(self.1.x))
+			&& (self.0.y.min(self.1.y) <= point.y && point.y <= self.0.y.max(self.1.y))
+		{
+			return 0
+				== (point.x - self.0.x) * (self.1.y - self.0.y)
+					- (point.y - self.0.y) * (self.1.x - self.0.x);
 		}
 		false
-	 }
+	}
 }
 
 #[derive(Debug)]
@@ -53,7 +58,7 @@ impl Polygon {
 	fn from_points(points: Vec<Point>) -> Self {
 		let mut edges = Vec::new();
 		for i in 0..points.len() {
-			edges.push(Edge::from_points(points[i], points[(i+1) % points.len()]));
+			edges.push(Edge::from_points(points[i], points[(i + 1) % points.len()]));
 		}
 		Self(points, edges)
 	}
@@ -80,9 +85,10 @@ impl Polygon {
 		self.0.iter()
 	}
 	fn intersects(&self, polygon: &Polygon) -> bool {
-		polygon.edges().any(|inner_edge| self.edges().any(|outer_edge| {
-			outer_edge.intersects(inner_edge)
-		}))
+		polygon.edges().any(|inner_edge| {
+			self.edges()
+				.any(|outer_edge| outer_edge.intersects(inner_edge))
+		})
 	}
 	fn contains_poly(&self, polygon: &Polygon) -> bool {
 		if self.intersects(polygon) {
@@ -116,9 +122,8 @@ fn main() {
 				continue;
 			}
 			max = max.max(
-				((points[i].x - points[j].x).abs() + 1) *
-				((points[i].y - points[j].y).abs() + 1));
-			
+				((points[i].x - points[j].x).abs() + 1) * ((points[i].y - points[j].y).abs() + 1),
+			);
 		}
 	}
 	println!("{}", max);
@@ -129,39 +134,38 @@ mod tests {
 	#[test]
 	fn contains_test() {
 		let outer = Polygon::from_points(vec![
-			Point::new(7,1),
-			Point::new(11,1),
-			Point::new(11,7),
-			Point::new(9,7),
-			Point::new(9,5),
-			Point::new(2,5),
-			Point::new(2,3),
-			Point::new(7,3)
+			Point::new(7, 1),
+			Point::new(11, 1),
+			Point::new(11, 7),
+			Point::new(9, 7),
+			Point::new(9, 5),
+			Point::new(2, 5),
+			Point::new(2, 3),
+			Point::new(7, 3),
 		]);
 		assert!(outer.contains_poly(&Polygon::from_points(vec![
-					Point::new(9,5),
-					Point::new(2,5),
-					Point::new(2,3),
-					Point::new(9,3),
+			Point::new(9, 5),
+			Point::new(2, 5),
+			Point::new(2, 3),
+			Point::new(9, 3),
 		])));
 		assert!(outer.contains_poly(&Polygon::from_points(vec![
-					Point::new(9,7),
-					Point::new(9,5),
-					Point::new(9,7),
-					Point::new(9,5),
+			Point::new(9, 7),
+			Point::new(9, 5),
+			Point::new(9, 7),
+			Point::new(9, 5),
 		])));
 		assert!(outer.contains_poly(&Polygon::from_points(vec![
-					Point::new(11,1),
-					Point::new(11,3),
-					Point::new(7,3),
-					Point::new(7,1),
+			Point::new(11, 1),
+			Point::new(11, 3),
+			Point::new(7, 3),
+			Point::new(7, 1),
 		])));
 		assert!(!outer.contains_poly(&Polygon::from_points(vec![
-					Point::new(2,5),
-					Point::new(2,1),
-					Point::new(11,1),
-					Point::new(11,5),
+			Point::new(2, 5),
+			Point::new(2, 1),
+			Point::new(11, 1),
+			Point::new(11, 5),
 		])));
-
 	}
 }
